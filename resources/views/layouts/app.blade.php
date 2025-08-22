@@ -56,6 +56,10 @@
     <a href="{{ route('dashboard') }}">Home</a>
     <a href="{{ route('profile.edit') }}">Perfil</a>
     <a href="#">Configurações</a>
+    <!-- Botão para abrir o modal de nova categoria -->
+    <a href="#" class="d-block px-3 py-2" data-bs-toggle="modal" data-bs-target="#createCategoryModal">
+        ➕ Nova Categoria
+    </a>
 
     <form action="{{ route('logout') }}" method="POST" class="px-3 mt-2">
       @csrf
@@ -93,5 +97,35 @@
       }
     });
   </script>
+  <div class="modal fade" id="createCategoryModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Criar nova categoria</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+            </div>
+            <div class="modal-body">
+                <form action="{{ route('categories.store') }}" method="POST">
+                    @csrf
+                    <div class="mb-3">
+                        <label for="name" class="form-label">Nome da categoria</label>
+                        <input type="text" class="form-control" name="name" id="name" required>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="type" class="form-label">Tipo</label>
+                        <select name="type" id="type" class="form-control" required>
+                            <option value="receita">Receita</option>
+                            <option value="despesa">Despesa</option>
+                        </select>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary w-100">Criar Categoria</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
 </body>
 </html>

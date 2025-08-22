@@ -36,26 +36,7 @@
 
     <!-- Formulário para criar categoria -->
     <div class="row">
-        <div class="col-md-6">
-            <h4>Criar nova categoria</h4>
-            <form action="{{ route('categories.store') }}" method="POST">
-                @csrf
-                <div class="mb-3">
-                    <label for="name" class="form-label">Nome da categoria</label>
-                    <input type="text" class="form-control" name="name" id="name" required>
-                </div>
-
-                <div class="mb-3">
-                    <label for="type" class="form-label">Tipo</label>
-                    <select name="type" id="type" class="form-control" required>
-                        <option value="receita">Receita</option>
-                        <option value="despesa">Despesa</option>
-                    </select>
-                </div>
-
-                <button type="submit" class="btn btn-primary">Criar Categoria</button>
-            </form>
-        </div>
+        
 
         <div class="col-md-6">
             <h4>Suas categorias</h4>
