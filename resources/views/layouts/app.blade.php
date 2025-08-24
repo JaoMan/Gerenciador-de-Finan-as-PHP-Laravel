@@ -58,8 +58,13 @@
     <a href="#">Configurações</a>
     <!-- Botão para abrir o modal de nova categoria -->
     <a href="#" class="d-block px-3 py-2" data-bs-toggle="modal" data-bs-target="#createCategoryModal">
-        ➕ Nova Categoria
+        ➕ Categoria
     </a>
+    <!-- Botão para abrir o modal de nova categoria -->
+    <a href="#" class="d-block px-3 py-2" data-bs-toggle="modal" data-bs-target="#addTransactionModal">
+       ➕ Transação
+</a>
+
 
     <form action="{{ route('logout') }}" method="POST" class="px-3 mt-2">
       @csrf
@@ -121,6 +126,54 @@
                     </div>
 
                     <button type="submit" class="btn btn-primary w-100">Criar Categoria</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="addTransactionModal" tabindex="-1" aria-labelledby="addTransactionModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="addTransactionModalLabel">Adicionar Transação</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+            </div>
+            <div class="modal-body">
+                <form action="{{ route('transactions.store') }}" method="POST">
+                    @csrf
+                    <div class="mb-3">
+                        <label for="title" class="form-label">Descrição</label>
+                        <input type="text" name="title" id="title" class="form-control" required>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="amount" class="form-label">Valor</label>
+                        <input type="number" name="amount" id="amount" class="form-control" step="0.01" required>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="type" class="form-label">Tipo</label>
+                        <select name="type" id="type" class="form-control" required>
+                            <option value="receita">Receita</option>
+                            <option value="despesa">Despesa</option>
+                        </select>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="category_id" class="form-label">Categoria</label>
+                        <select name="category_id" id="category_id" class="form-control" required>
+                            @foreach(auth()->user()->categories as $category)
+                                <option value="{{ $category->id }}">{{ $category->name }} ({{ $category->type }})</option>
+                            @endforeach
+                        </select>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="date" class="form-label">Data</label>
+                        <input type="date" name="date" id="date" class="form-control" required>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary">Adicionar</button>
                 </form>
             </div>
         </div>

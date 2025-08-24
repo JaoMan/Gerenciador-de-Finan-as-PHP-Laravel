@@ -7,7 +7,7 @@
     <!-- Botão para abrir o modal de nova categoria -->
     <a href="#" class="d-block px-3 py-2" data-bs-toggle="modal" data-bs-target="#createCategoryModal">
         ➕ Nova Categoria
-    </a>
+    </a> 
     <form action="{{ route('logout') }}" method="POST" class="d-block px-3 py-2">
         @csrf
         <button type="submit" class="btn btn-link text-white p-0 m-0" style="text-decoration:none;">

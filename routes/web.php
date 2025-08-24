@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\CategoryController;
+use App\Http\Controllers\TransactionController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -40,4 +41,9 @@ Route::middleware('auth')->group(function () {
 
     // Rota para criar categoria
     Route::post('/categories', [CategoryController::class, 'store'])->name('categories.store');
+});
+
+Route::middleware('auth')->group(function () {
+   Route::resource('transactions', TransactionController::class)->middleware('auth');
+    
 });
