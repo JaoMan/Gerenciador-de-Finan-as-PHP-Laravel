@@ -3,13 +3,20 @@
 @section('content')
 
 <div class="container mt-4">
-    
+
+    <!-- ================================
+         Formulário de filtro de datas (Dashboard)
+         ================================ -->
     <div class="row mb-3 justify-content-center">
         <div class="col-12 col-md-10 col-lg-8">
+
             <form action="{{ route('dashboard') }}" method="GET"
                 class="row gy-2 gx-3 align-items-center p-3 border rounded shadow-sm bg-white">
 
-                <!-- Data Inicial -->
+                <!-- Título do formulário -->
+                <h2 class="text-center">Data de consulta</h2>
+
+                <!-- Campo Data Inicial -->
                 <div class="col-sm-6 col-md-auto">
                     <div class="input-group">
                         <span class="input-group-text"><i class="bi bi-calendar-event"></i></span>
@@ -18,7 +25,7 @@
                     </div>
                 </div>
 
-                <!-- Data Final -->
+                <!-- Campo Data Final -->
                 <div class="col-sm-6 col-md-auto">
                     <div class="input-group">
                         <span class="input-group-text"><i class="bi bi-calendar-event-fill"></i></span>
@@ -27,11 +34,12 @@
                     </div>
                 </div>
 
-                <!-- Botões -->
+                <!-- Botões Filtrar e Limpar -->
                 <div class="col-md-auto d-flex gap-2">
                     <button type="submit" class="btn btn-primary">
                         <i class="bi bi-funnel"></i> Filtrar
                     </button>
+                    <!-- Botão Limpar só aparece se houver filtro aplicado -->
                     @if(request('start_date') || request('end_date'))
                     <a href="{{ route('dashboard') }}" class="btn btn-outline-secondary">
                         <i class="bi bi-x-circle"></i> Limpar
@@ -42,8 +50,10 @@
         </div>
     </div>
 
+    <!-- ================================
+         Cards Resumo (Receita, Despesa, Saldo)
+         ================================ -->
     <div class="row mb-4">
-        <!-- Card topo da página -->
         <!-- Card Receita -->
         <div class="col-md-4">
             <div class="card text-white bg-success mb-3">
@@ -75,47 +85,69 @@
         </div>
     </div>
 
-
-    <!-- Formulário para criar categoria -->
     <div class="row">
-
-        <div class="col-md-6">
-            <h4>Suas categorias</h4>
-            <ul class="list-group">
-                @forelse(auth()->user()->categories as $category)
-                <li class="list-group-item d-flex justify-content-between align-items-center">
-                    {{ $category->name }} ({{ $category->type }})
-                </li>
-                @empty
-                <li class="list-group-item">Você ainda não criou categorias.</li>
-                @endforelse
-            </ul>
-        </div>
-        <div class="row mb-3">
+        <!-- ================================
+     Categorias em Cards Premium
+     ================================ -->
+        <div class="row mb-4">
             <div class="col-12">
-                <form action="{{ route('dashboard') }}" method="GET" class="row g-2 align-items-center">
-                    <div class="col-auto">
-                        <label for="start_date" class="col-form-label">De:</label>
-                    </div>
-                    <div class="col-auto">
-                        <input type="date" name="start_date" id="start_date" class="form-control"
-                            value="{{ request('start_date') }}">
+                <h4>Suas categorias</h4>
+
+                <!-- Campo de pesquisa -->
+                <div class="mb-3">
+                    <input type="text" id="searchCategory" class="form-control" placeholder="Pesquisar categoria...">
+                </div>
+
+                <div class="row" id="categoriesContainer">
+
+                    @foreach($categories as $category)
+                    @php
+                    $percent = $totalGeral > 0 ? ($category->total / $totalGeral) * 100 : 0;
+                    $gradient = $category->type == 'receita'
+                    ? 'bg-gradient-success'
+                    : 'bg-gradient-danger';
+                    @endphp
+
+                    <div class="col-sm-6 col-md-4 mb-3 category-card" data-name="{{ strtolower($category->name) }}">
+                        <div class="card h-100 shadow-sm card-hover {{ $gradient }}">
+                            <div class="card-body text-white">
+                                <div class="d-flex align-items-center mb-2">
+                                    <i class="bi {{ $category->icon }} fs-3 me-2"></i>
+                                    <h5 class="card-title mb-0">{{ $category->name }}</h5>
+                                </div>
+                                <p class="card-text mb-1">
+                                    Tipo:
+                                    <span
+                                        class="badge {{ $category->type == 'receita' ? 'bg-light text-success' : 'bg-light text-danger' }}">
+                                        {{ ucfirst($category->type) }}
+                                    </span>
+                                </p>
+                                <p class="card-text mb-2">
+                                    Total: <strong>R$ {{ number_format($category->total, 2, ',', '.') }}</strong>
+                                </p>
+
+                                <div class="progress" style="height: 8px; background-color: rgba(255,255,255,0.3);">
+                                    <div class="progress-bar" role="progressbar"
+                                        style="width: {{ $percent }}%; transition: width 1s ease;"
+                                        aria-valuenow="{{ $percent }}" aria-valuemin="0" aria-valuemax="100">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
 
-                    <div class="col-auto">
-                        <label for="end_date" class="col-form-label">Até:</label>
-                    </div>
-                    <div class="col-auto">
-                        <input type="date" name="end_date" id="end_date" class="form-control"
-                            value="{{ request('end_date') }}">
-                    </div>
+                    @endforeach
+                </div>
 
-                    <div class="col-auto">
-                        <button type="submit" class="btn btn-primary">Filtrar</button>
-                    </div>
-                </form>
             </div>
         </div>
+
+    </div>
+    <div class="row">
+
+        <!-- ================================
+             Tabela de Transações Recentes
+             ================================ -->
         <div class="row mt-4">
             <div class="col-12">
                 <h4>Transações Recentes</h4>
@@ -145,7 +177,6 @@
                                 <span class="badge bg-secondary">Sem Categoria</span>
                                 @endif
                             </td>
-
                             <td>{{ \Carbon\Carbon::parse($transaction->date)->format('d/m/Y') }}</td>
                         </tr>
                         @empty
@@ -158,27 +189,22 @@
             </div>
         </div>
 
-        <div class="row mt-4">
-            <div class="col-12">
-                <h4>Total por Categoria</h4>
-                <ul class="list-group">
-                    @foreach($transactionsByCategory as $categoryName => $total)
-                    <li class="list-group-item d-flex justify-content-between align-items-center">
-                        {{ $categoryName }}
-                        <span class="badge bg-primary rounded-pill">
-                            R$ {{ number_format($total, 2, ',', '.') }}
-                        </span>
-                    </li>
-                    @endforeach
-                </ul>
-            </div>
-        </div>
 
+    </div> <!-- Fim da row principal -->
 
+    <!-- ================================
+     Script de filtro por nome
+     ================================ -->
+    <script>
+    document.getElementById('searchCategory').addEventListener('input', function() {
+        const search = this.value.toLowerCase();
+        const cards = document.querySelectorAll('#categoriesContainer .category-card');
 
-    </div>
-
-
-
+        cards.forEach(card => {
+            const name = card.getAttribute('data-name');
+            card.style.display = name.includes(search) ? 'block' : 'none';
+        });
+    });
+    </script>
 </div>
 @endsection

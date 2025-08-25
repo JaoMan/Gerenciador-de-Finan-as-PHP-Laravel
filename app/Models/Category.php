@@ -9,7 +9,7 @@ class Category extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['user_id', 'name', 'type', 'is_default'];
+    protected $fillable = ['user_id', 'name', 'type', 'valor', 'is_default'];
 
     public function user()
     {
@@ -20,4 +20,11 @@ class Category extends Model
     {
         return $this->hasMany(Transaction::class);
     }
+
+ // Retorna total da categoria
+    public function getTotalAttribute()
+    {
+        return $this->transactions()->sum('amount');
+    }
+
 }
